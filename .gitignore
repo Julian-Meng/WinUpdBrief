@@ -26,3 +26,13 @@ go.work.sum
 
 # log files
 *.txt
+/tmp/
+
+# Built application files
+/bin/
+/dist/
+*.exe
+
+# IDE files
+.vscode/
+.DS_Store
