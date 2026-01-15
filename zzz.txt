@@ -1,0 +1,18 @@
+winupdbrief/
+  go.mod
+  cmd/
+    winupdbrief/
+      main.go
+  internal/
+    winver/
+      winver.go          // 读注册表 + RtlGetVersion 兜底，输出一个结构体
+      winver_windows.go  // （可选）Windows-only 实现
+    updates/
+      map.go             // build -> 更新历史入口页映射
+      fetch.go           // http 客户端 + 重试
+      parse.go           // goquery 解析（重点：可测试）
+      parse_test.go
+    render/
+      text.go
+      json.go
+  README.md
