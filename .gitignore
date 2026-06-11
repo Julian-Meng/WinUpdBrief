@@ -36,3 +36,7 @@ go.work.sum
 # IDE files
 .vscode/
 .DS_Store
+
+TODO/
+
+.copilot-memory/

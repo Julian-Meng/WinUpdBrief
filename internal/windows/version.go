@@ -1,4 +1,4 @@
-package winver
+package windows
 
 import (
 	"fmt"
@@ -10,7 +10,6 @@ import (
 const currentVersionPath = `SOFTWARE\Microsoft\Windows NT\CurrentVersion`
 
 type Info struct {
-	// Raw registry values
 	ProductName        string
 	DisplayVersion     string
 	ReleaseID          string
@@ -20,7 +19,6 @@ type Info struct {
 	EditionID          string
 	BuildLabEx         string
 
-	// Derived / effective values
 	EffectiveDisplayVersion string
 	EffectiveBuild          string
 	BuildInt                int
@@ -47,8 +45,6 @@ func ReadCurrentVersion() (Info, error) {
 		EditionID:          getStringValue(key, "EditionID"),
 		BuildLabEx:         getStringValue(key, "BuildLabEx"),
 	}
-
-	// ---- derived fields ----
 
 	if info.DisplayVersion != "" {
 		info.EffectiveDisplayVersion = info.DisplayVersion
@@ -87,13 +83,12 @@ func getIntegerValue(key registry.Key, name string) uint64 {
 	return value
 }
 
-func (i *Info) Format() string {
-	output := "Windows CurrentVersion\n"
-	output += "ProductName: " + i.ProductName + "\n"
-	output += "DisplayVersion: " + i.EffectiveDisplayVersion + "\n"
-	output += "CurrentBuild: " + i.EffectiveBuild + "\n"
-	output += "UBR: " + fmt.Sprintf("%d", i.UBR) + "\n"
-	output += "EditionID: " + i.EditionID + "\n"
-	output += "BuildLabEx: " + i.BuildLabEx
-	return output
+func (i Info) BuildString() string {
+	if i.EffectiveBuild == "" {
+		return ""
+	}
+	if i.UBR > 0 {
+		return fmt.Sprintf("%s.%d", i.EffectiveBuild, i.UBR)
+	}
+	return i.EffectiveBuild
 }

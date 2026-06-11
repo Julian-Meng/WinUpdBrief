@@ -1,4 +1,4 @@
-package updates
+package fetcher
 
 import (
 	"compress/gzip"
@@ -44,7 +44,6 @@ func NewFetcher() *Fetcher {
 func (f *Fetcher) GetHTML(ctx context.Context, url string) ([]byte, error) {
 	var lastErr error
 
-	// 简单指数退避
 	backoff := []time.Duration{0, 700 * time.Millisecond, 1500 * time.Millisecond}
 
 	for attempt := 0; attempt < len(backoff); attempt++ {
@@ -61,7 +60,6 @@ func (f *Fetcher) GetHTML(ctx context.Context, url string) ([]byte, error) {
 			return nil, err
 		}
 
-		// 固定 en-us
 		req.Header.Set("User-Agent", f.UA)
 		req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
 		req.Header.Set("Accept-Language", "en-US,en;q=0.9")
@@ -74,7 +72,6 @@ func (f *Fetcher) GetHTML(ctx context.Context, url string) ([]byte, error) {
 		}
 		defer resp.Body.Close()
 
-		// 429/5xx 重试
 		if resp.StatusCode == http.StatusTooManyRequests || resp.StatusCode >= 500 {
 			lastErr = fmt.Errorf("http %d", resp.StatusCode)
 			continue
@@ -93,7 +90,6 @@ func (f *Fetcher) GetHTML(ctx context.Context, url string) ([]byte, error) {
 			body = gr
 		}
 
-		// 4MB 上限
 		b, err := io.ReadAll(io.LimitReader(body, 4<<20))
 		if err != nil {
 			return nil, err

@@ -17,16 +17,21 @@ WinUpdBrief is a lightweight Windows utility tool designed to quickly fetch and 
 
 ```
 WinUpdBrief/
-├── main.go              # 主程序入口
+├── cmd/
+│   └── winupdbrief/
+│       └── main.go      # CLI 入口
 ├── go.mod               # Go模块配置
-├── winver/
-│   └── winver.go        # 系统版本信息读取（从注册表）
-├── updates/
-│   ├── fetch.go         # 更新信息抓取
-│   ├── history.go       # 更新历史记录处理
-│   └── kb.go            # KB文章内容处理
-├── render/
-│   └── text.go          # 信息展示渲染
+├── internal/
+│   ├── app/
+│   │   └── run.go       # 应用编排与交互
+│   ├── fetcher/
+│   │   ├── fetch.go     # HTTP 客户端与重试
+│   │   ├── history.go   # 更新历史记录处理
+│   │   └── kb.go       # KB文章内容处理
+│   ├── ui/
+│   │   └── text.go      # 信息展示渲染
+│   └── windows/
+│       └── version.go   # 系统版本信息读取（从注册表）
 └── README.md            # 项目说明
 ```
 
@@ -35,10 +40,17 @@ WinUpdBrief/
 1. **读取本地系统信息** - 通过Windows注册表获取当前系统版本和Build号
 2. **抓取更新信息** - 查询Microsoft官方更新页面，获取对应Build的最新补丁
 3. **获取KB详情** - 提取更新对应的Knowledge Base文章内容
-4. **格式化输出** - 整合所有信息并以友好的文本格式呈现
+4. **格式化输出** - 整合所有信息并以友好的文本格式呈现，支持简略/详细两种视图
 
 ## 技术栈 / Tech Stack
 
 - **Go 1.25.5** - 主要开发语言
 - **goquery** - HTML解析库
 - **golang.org/x/sys** - Windows系统调用接口
+
+## 运行方式 / Usage
+
+```bash
+go run ./cmd/winupdbrief
+go run ./cmd/winupdbrief --detail
+```

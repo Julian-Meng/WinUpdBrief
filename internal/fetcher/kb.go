@@ -1,4 +1,4 @@
-package updates
+package fetcher
 
 import (
 	"bytes"
@@ -26,13 +26,11 @@ func (f *Fetcher) FetchKBContent(ctx context.Context, kbURL string) (*KBContent,
 		return nil, err
 	}
 
-	// 标题（页面 <title> 或 h1）
 	title := strings.TrimSpace(doc.Find("h1").First().Text())
 	if title == "" {
 		title = strings.TrimSpace(doc.Find("title").First().Text())
 	}
 
-	// Summary / Highlights
 	var summaryParts []string
 
 	doc.Find("p").Each(func(_ int, p *goquery.Selection) {
@@ -41,7 +39,6 @@ func (f *Fetcher) FetchKBContent(ctx context.Context, kbURL string) (*KBContent,
 			return
 		}
 
-		// 非常保守的过滤
 		if len(text) < 40 {
 			return
 		}
